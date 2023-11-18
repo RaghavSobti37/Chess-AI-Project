@@ -3,6 +3,7 @@ Main driver file.
 Handling user input.
 Displaying current GameStatus object.
 """
+from numpy import False_
 import pygame as p
 import ChessEngine, ChessAI
 import sys
@@ -50,7 +51,7 @@ def main():
     move_finder_process = None
     move_log_font = p.font.SysFont("Arial", 14, False, False)
     player_one = True  # if a human is playing white, then this will be True, else False
-    player_two = False  # if a hyman is playing white, then this will be True, else False
+    player_two = False  # if a human is playing white, then this will be True, else False
 
     while running:
         human_turn = (game_state.white_to_move and player_one) or (not game_state.white_to_move and player_two)
@@ -208,6 +209,7 @@ def drawPieces(screen, board):
             piece = board[row][column]
             if piece != "--":
                 screen.blit(IMAGES[piece], p.Rect(column * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE))
+        
 
 
 def drawMoveLog(screen, game_state, font):
@@ -225,7 +227,7 @@ def drawMoveLog(screen, game_state, font):
             move_string += str(move_log[i + 1]) + "  "
         move_texts.append(move_string)
 
-    moves_per_row = 3
+    moves_per_row = 1
     padding = 5
     line_spacing = 2
     text_y = padding
