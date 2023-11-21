@@ -123,10 +123,41 @@ def scoreBoard(game_state):
 
     return score
 
+# Initialize Q-values
+Q = {}
+EPSILON = 0.2
+ALPHA = 0.5
+GAMMA = 0.9
 
-# def findRandomMove(valid_moves):
-#     """
-#     Picks and returns a random valid move.
-#     """
-#     return random.choice(valid_moves)
+def update_q_value(state, action, reward, next_state):
+    current_q = Q.get((state, action), 0)
+    max_future_q = max(Q.get((next_state, next_action), 0) for next_action in get_legal_moves(next_state))
+    new_q = (1 - ALPHA) * current_q + ALPHA * (reward + GAMMA * max_future_q)
+    Q[(state, action)] = new_q
+
+def choose_action(state):
+    if random.uniform(0, 1) < EPSILON:
+        return random.choice(get_legal_moves(state))
+    else:
+        return max(get_legal_moves(state), key=lambda move: Q.get((state, move), 0))
+
+def get_legal_moves(state):
+    legal_moves = []
+
+    chess_board = self.board(state)
+    for move in chess_board.legal_moves:
+        # Check if the move is castling or en passant
+        if move.uci() in ['e1g1', 'e1c1', 'e8g8', 'e8c8', 'e1g1c1', 'e8g8c8']:
+            legal_moves.append(move.uci())
+        else:
+            # Add other legal moves
+            legal_moves.append(move.uci())
+
+    return legal_moves
+ 
+def findRandomMove(valid_moves):
+    """
+    Picks and returns a random valid move.
+    """
+    return random.choice(valid_moves)
 

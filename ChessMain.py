@@ -50,7 +50,7 @@ def main():
     move_undone = False
     move_finder_process = None
     move_log_font = p.font.SysFont("Arial", 14, False, False)
-    player_one = True  # if a human is playing white, then this will be True, else False
+    player_one = False  # if a human is playing white, then this will be True, else False
     player_two = False  # if a human is playing white, then this will be True, else False
 
     while running:
@@ -215,7 +215,6 @@ def drawPieces(screen, board):
 def drawMoveLog(screen, game_state, font):
     """
     Draws the move log.
-
     """
     move_log_rect = p.Rect(BOARD_WIDTH, 0, MOVE_LOG_PANEL_WIDTH, MOVE_LOG_PANEL_HEIGHT)
     p.draw.rect(screen, p.Color('black'), move_log_rect)
