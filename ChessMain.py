@@ -3,7 +3,12 @@ Main driver file.
 Handling user input.
 Displaying current GameStatus object.
 """
+from typing import Self
+from boardsetup import chessboard
+from ChessAI import getOpeningMove
+import ChessEngine
 from numpy import False_
+import numpy as np
 import pygame as p
 import ChessEngine, ChessAI
 import sys
@@ -26,7 +31,6 @@ def loadImages():
     pieces = ['wp', 'wR', 'wN', 'wB', 'wK', 'wQ', 'bp', 'bR', 'bN', 'bB', 'bK', 'bQ']
     for piece in pieces:
         IMAGES[piece] = p.transform.scale(p.image.load("C:/Users/Raghav Raj Sobti/Downloads/AI-Chess/chess-ai/images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE))
-
 
 def main():
     """
@@ -52,7 +56,8 @@ def main():
     move_log_font = p.font.SysFont("Arial", 14, False, False)
     player_one = False  # if a human is playing white, then this will be True, else False
     player_two = False  # if a human is playing white, then this will be True, else False
-
+    opening_move = getOpeningMove(chessboard) #decide opening
+    
     while running:
         human_turn = (game_state.white_to_move and player_one) or (not game_state.white_to_move and player_two)
         for e in p.event.get():
@@ -114,7 +119,12 @@ def main():
                 return_queue = Queue()  # used to pass data between threads
                 move_finder_process = Process(target=ChessAI.findBestMove, args=(game_state, valid_moves, return_queue))
                 move_finder_process.start()
+                
+            def is_opening_phase(game_state):
+                return len(game_state.move_log) < 4 #check opening game phase
 
+            if is_opening_phase(game_state):
+                ai_move = getOpeningMove(game_state.board) # play opening
             if not move_finder_process.is_alive():
                 ai_move = return_queue.get()
                 if ai_move is None:

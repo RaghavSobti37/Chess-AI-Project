@@ -3,25 +3,18 @@ Storing all the information about the current state of chess game.
 Determining valid moves at current state.
 It will keep move log.
 """
-
+import numpy as np
+from boardsetup import chessboard
 
 class GameState:
     def __init__(self):
         """
-        Board is an 8x8 2d list, each element in list has 2 characters.
+        Board is an 8x8 NumPy array, each element in array has 2 characters.
         The first character represents the color of the piece: 'b' or 'w'.
         The second character represents the type of the piece: 'R', 'N', 'B', 'Q', 'K' or 'p'.
         "--" represents an empty space with no piece.
         """
-        self.board = [
-            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-            ["bp", "bp", "bp", "bp", "bp", "bp", "bp", "bp"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["--", "--", "--", "--", "--", "--", "--", "--"],
-            ["wp", "wp", "wp", "wp", "wp", "wp", "wp", "wp"],
-            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]]
+        self.board = chessboard # initializing our chessboard using boardsetup
         self.moveFunctions = {"p": self.getPawnMoves, "R": self.getRookMoves, "N": self.getKnightMoves,
                               "B": self.getBishopMoves, "Q": self.getQueenMoves, "K": self.getKingMoves}
         self.white_to_move = True
@@ -38,6 +31,10 @@ class GameState:
         self.current_castling_rights = CastleRights(True, True, True, True)
         self.castle_rights_log = [CastleRights(self.current_castling_rights.wks, self.current_castling_rights.bks,
                                                self.current_castling_rights.wqs, self.current_castling_rights.bqs)]
+
+    # You'll need to modify other methods that access or modify self.board to work with NumPy array operations.
+    # For example, replacing loops with array indexing and slicing for better performance.
+
 
     def makeMove(self, move):
         """

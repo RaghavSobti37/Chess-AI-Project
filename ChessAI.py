@@ -2,12 +2,13 @@
 Handling the AI moves.
 """
 import random
+import numpy as np
 
 piece_score = {"K": 0, "Q": 9, "R": 5, "B": 3, "N": 3, "p": 1}
 
 knight_scores = [[0.0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.0],
                  [0.1, 0.3, 0.5, 0.5, 0.5, 0.5, 0.3, 0.1],
-                 [0.2, 0.5, 0.6, 0.65, 0.65, 0.6, 0.5, 0.2],
+                 [0.2, 0.5, 0.45, 0.65, 0.65, 0.45, 0.5, 0.2],
                  [0.2, 0.55, 0.65, 0.7, 0.7, 0.65, 0.55, 0.2],
                  [0.2, 0.5, 0.65, 0.7, 0.7, 0.65, 0.5, 0.2],
                  [0.2, 0.55, 0.6, 0.65, 0.65, 0.6, 0.55, 0.2],
@@ -65,6 +66,60 @@ CHECKMATE = 1000
 STALEMATE = 0
 DEPTH = 3
 
+def getOpeningMove(chessboard):
+    # Convert the chessboard to a FEN-like string
+    def boardToFEN(board):
+        fen = ''
+        for row in board:
+            empty_count = 0
+            for square in row:
+                if square == '--':
+                    empty_count += 1
+                else:
+                    if empty_count > 0:
+                        fen += str(empty_count)
+                        empty_count = 0
+                    fen += square
+            if empty_count > 0:
+                fen += str(empty_count)
+            fen += '/'
+        return fen[:-1]  # Remove '/'
+
+    fen = boardToFEN(chessboard)
+
+    # Opening moves based on FEN strings
+    openings = {
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR": ["e2e4", "d2d4", "Nf3", "c4"],
+        # King's Pawn Opening
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR": ["e2e4", "d2d4"],
+        # English Opening
+        "rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR": ["d2d4", "e4e5", "c2c4"],
+        # Queen's Pawn Opening
+        "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP2PPP/RNBQKBNR": ["d2d4", "d7d5", "c2c4"],
+        # Queen's Gambit
+        "rnbqkbnr/pppp1ppp/8/8/3P4/8/PPP2PPP/RNBQKBNR": ["d2d4", "e7e6", "c2c4"],
+        # Queen's Gambit Declined
+        "rnbqkbnr/pp2pppp/8/3p4/3P4/8/PPP2PPP/RNBQKBNR": ["d2d4", "d7d5", "c2c4", "b8c6"],
+        # King's Indian Defense
+        "rnbqkbnr/ppp2ppp/8/3pp3/3P4/8/PPP2PPP/RNBQKBNR": ["d2d4", "e7e5", "c2c4"],
+        # Budapest Gambit
+        "r1bqkbnr/pppp1ppp/8/3Pp3/8/8/PPP2PPP/RNBQKBNR": ["d2d4", "e4d3"],
+        # Scandinavian Defense
+        "rnbqkbnr/pppp1ppp/8/3Pp3/8/8/PPP2PPP/RNBQKBNR": ["d2d4", "e4d3", "e7e5"],
+        # Grünfeld Defense
+        "r1bqkbnr/ppp2ppp/8/3p1P2/8/8/PPP2PPP/RNBQKBNR": ["d2d4", "d7d5", "e4e5"],
+        # Alekhine Defense
+        "r1bqkbnr/pp2ppp1/8/3P4/8/8/PPP2PPP/RNBQKBNR": ["d2d4", "d7d5", "e4e5", "f8d6"]
+    }
+
+    # Check if the current position has an opening move
+    if fen in openings:
+        return random.choice(openings[fen])
+    else:
+        # If no specific opening is defined, return a random legal move
+        legal_moves = ["a2a3", "a2a4", "b2b3", "b2b4", "c2c3", "c2c4", "d2d3", "d2d4", 
+                       "e2e3", "e2e4", "f2f3", "f2f4", "g2g3", "g2g4", "h2h3", "h2h4"]
+        return random.choice(legal_moves)
 
 def findBestMove(game_state, valid_moves, return_queue):
     global next_move
